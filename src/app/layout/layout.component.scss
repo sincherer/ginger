@@ -1,0 +1,127 @@
+:host ::ng-deep .ant-layout-sider {
+  transition: all 0.2s;
+}
+
+/* Menu container to handle proper scrolling */
+.menu-container {
+  height: calc(100vh - 64px - 65px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.menu-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.menu-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+:host ::ng-deep .ant-menu {
+  border-right: none !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .ant-menu-item,
+:host ::ng-deep .ant-menu-submenu-title {
+  height: 48px !important;
+  line-height: 48px !important;
+  font-size: 14px !important;
+  margin: 4px 8px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+:host ::ng-deep .ant-menu-item .anticon,
+:host ::ng-deep .ant-menu-submenu-title .anticon {
+  font-size: 16px !important;
+  margin-right: 12px !important;
+  min-width: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:host ::ng-deep .ant-menu-item span:not(.anticon),
+:host ::ng-deep .ant-menu-submenu-title span:not(.anticon):not(.ant-menu-submenu-arrow) {
+  flex: 1 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+:host ::ng-deep .ant-menu-item:hover,
+:host ::ng-deep .ant-menu-submenu-title:hover {
+  background-color: #f0f5ff !important;
+  color: #1890ff !important;
+}
+
+:host ::ng-deep .ant-menu-item-selected {
+  background-color: #e6f4ff !important;
+  color: #1890ff !important;
+}
+
+:host ::ng-deep .ant-menu-submenu-arrow {
+  color: #8c8c8c !important;
+  right: 16px !important;
+}
+
+:host ::ng-deep .ant-menu-item:active,
+:host ::ng-deep .ant-menu-submenu-title:active {
+  background-color: #bae7ff !important;
+}
+
+/* Submenu items styling */
+:host ::ng-deep .ant-menu-sub .ant-menu-item {
+  padding-left: 48px !important;
+  font-size: 13px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+}
+
+/* Collapsed menu styles */
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-item,
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-submenu-title {
+  padding: 0 !important;
+  justify-content: center !important;
+  width: 64px !important;
+  margin: 4px 8px !important;
+}
+
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-item .anticon,
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-submenu-title .anticon {
+  margin-right: 0 !important;
+  font-size: 18px !important;
+}
+
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-item span:not(.anticon),
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-submenu-title span:not(.anticon):not(.ant-menu-submenu-arrow) {
+  display: none !important;
+}
+
+:host ::ng-deep .ant-menu-inline-collapsed .ant-menu-submenu-arrow {
+  display: none !important;
+}
+
+/* Ensure proper sidebar height */
+:host ::ng-deep nz-sider {
+  height: calc(100vh - 64px) !important;
+  overflow: hidden !important;
+}
+
+:host ::ng-deep .ant-layout-sider-children {
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}

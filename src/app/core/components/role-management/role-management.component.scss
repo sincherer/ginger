@@ -1,0 +1,84 @@
+:host {
+  display: block;
+
+  ::ng-deep {
+    .ant-card {
+      height: 100%;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+      .ant-card-head {
+        padding: 0 24px;
+        min-height: 48px;
+        border-bottom: 1px solid #f0f0f0;
+
+        .ant-card-head-title {
+          padding: 12px 0;
+          font-size: 16px;
+          font-weight: 500;
+        }
+
+        .ant-card-extra {
+          padding: 12px 0;
+          font-size: 14px;
+          color: #8c8c8c;
+        }
+      }
+
+      .ant-card-body {
+        padding: 24px;
+      }
+    }
+
+    .ant-switch {
+      min-width: 40px;
+      height: 22px;
+
+      &.ant-switch-checked {
+        background-color: #1890ff;
+      }
+
+      &.ant-switch-disabled {
+        opacity: 0.4;
+      }
+    }
+
+    .ant-modal {
+      .ant-modal-header {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 16px 24px;
+
+        .ant-modal-title {
+          font-size: 16px;
+          font-weight: 500;
+        }
+      }
+
+      .ant-modal-body {
+        padding: 24px;
+      }
+
+      .ant-modal-footer {
+        border-top: 1px solid #f0f0f0;
+        padding: 16px 24px;
+      }
+    }
+
+    .ant-input {
+      border-radius: 6px;
+      border-color: #d9d9d9;
+      padding: 8px 12px;
+      font-size: 14px;
+
+      &:hover,
+      &:focus {
+        border-color: #1890ff;
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: #bfbfbf;
+      }
+    }
+  }
+}

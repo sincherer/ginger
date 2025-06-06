@@ -1,0 +1,86 @@
+<div class="stock-in-container">
+  <h2>Stock Receipt Entry</h2>
+
+  <form [formGroup]="stockInForm" (ngSubmit)="onSubmit()" class="stock-in-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="itemId">Item ID*</label>
+        <input id="itemId" type="text" formControlName="itemId">
+      </div>
+
+      <div class="form-group">
+        <label for="itemName">Item Name*</label>
+        <input id="itemName" type="text" formControlName="itemName">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="quantity">Quantity*</label>
+        <input id="quantity" type="number" formControlName="quantity">
+      </div>
+
+      <div class="form-group">
+        <label for="unitPrice">Unit Price*</label>
+        <input id="unitPrice" type="number" step="0.01" formControlName="unitPrice">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="supplier">Supplier*</label>
+        <input id="supplier" type="text" formControlName="supplier">
+      </div>
+
+      <div class="form-group">
+        <label for="purchaseOrderNo">PO Number*</label>
+        <input id="purchaseOrderNo" type="text" formControlName="purchaseOrderNo">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="receivedDate">Received Date*</label>
+        <input id="receivedDate" type="date" formControlName="receivedDate">
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" formControlName="notes"></textarea>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="!stockInForm.valid">Submit</button>
+      <button type="button" (click)="stockInForm.reset()">Clear</button>
+    </div>
+  </form>
+
+  <div class="recent-entries">
+    <h3>Recent Stock Receipts</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Entry ID</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Unit Price</th>
+          <th>Supplier</th>
+          <th>PO Number</th>
+          <th>Received Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of recentEntries">
+          <td>{{entry.id}}</td>
+          <td>{{entry.itemName}}</td>
+          <td>{{entry.quantity}}</td>
+          <td>{{entry.unitPrice | currency}}</td>
+          <td>{{entry.supplier}}</td>
+          <td>{{entry.purchaseOrderNo}}</td>
+          <td>{{entry.receivedDate | date:'short'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+// Additional styles for profile settings component
+
+:host ::ng-deep {
+  // Tab styles
+  .ant-tabs-nav {
+    margin-bottom: 24px;
+  }
+  
+  // Form styles
+  .ant-form-item-label {
+    font-weight: 500;
+  }
+  
+  // Divider styles
+  .ant-divider {
+    margin: 16px 0;
+  }
+}

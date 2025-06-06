@@ -1,0 +1,100 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  <!-- Sales Statistics -->
+  <nz-card class="shadow-sm hover:shadow-md transition-shadow">
+    <nz-statistic
+      [nzValue]="123400"
+      [nzTitle]="'Monthly Sales'"
+      [nzPrefix]="'$'"
+      class="text-primary-600"
+    ></nz-statistic>
+    <div class="mt-4 flex items-center text-sm text-slate-500">
+      <span nz-icon nzType="arrow-up" class="text-green-500 mr-1"></span>
+      <span>12% increase from last month</span>
+    </div>
+  </nz-card>
+
+  <!-- Purchase Statistics -->
+  <nz-card class="shadow-sm hover:shadow-md transition-shadow">
+    <nz-statistic
+      [nzValue]="98500"
+      [nzTitle]="'Monthly Purchases'"
+      [nzPrefix]="'$'"
+      class="text-primary-600"
+    ></nz-statistic>
+    <div class="mt-4 flex items-center text-sm text-slate-500">
+      <span nz-icon nzType="arrow-down" class="text-red-500 mr-1"></span>
+      <span>5% decrease from last month</span>
+    </div>
+  </nz-card>
+
+  <!-- Inventory Alert -->
+  <nz-card class="shadow-sm hover:shadow-md transition-shadow">
+    <nz-statistic
+      [nzValue]="8"
+      [nzTitle]="'Low Stock Items'"
+      class="text-amber-500"
+    ></nz-statistic>
+    <div class="mt-4 flex items-center text-sm text-slate-500">
+      <span nz-icon nzType="warning" class="text-amber-500 mr-1"></span>
+      <span>Requires restocking</span>
+    </div>
+  </nz-card>
+
+  <!-- Accounts Receivable -->
+  <nz-card class="shadow-sm hover:shadow-md transition-shadow">
+    <nz-statistic
+      [nzValue]="45600"
+      [nzTitle]="'Receivables'"
+      [nzPrefix]="'$'"
+      class="text-red-500"
+    ></nz-statistic>
+    <div class="mt-4 flex items-center text-sm text-slate-500">
+      <span nz-icon nzType="clock-circle" class="text-blue-500 mr-1"></span>
+      <span>5 pending payments</span>
+    </div>
+  </nz-card>
+</div>
+
+<!-- Chart Area -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+  <nz-card class="shadow-sm hover:shadow-md transition-shadow" [nzTitle]="'Sales Trends'">
+    <!-- Sales trend chart will be added here -->
+    <div class="h-80 flex items-center justify-center bg-slate-50 rounded-lg border border-slate-200">
+      Chart Area - Sales Trends
+    </div>
+  </nz-card>
+
+  <nz-card class="shadow-sm hover:shadow-md transition-shadow" [nzTitle]="'Inventory Status'">
+    <!-- Inventory status chart will be added here -->
+    <div class="h-80 flex items-center justify-center bg-slate-50 rounded-lg border border-slate-200">
+      Chart Area - Inventory Status
+    </div>
+  </nz-card>
+</div>
+
+<!-- To-Do Items -->
+<nz-card class="mt-6 shadow-sm hover:shadow-md transition-shadow" [nzTitle]="'To-Do Items'">
+  <div class="space-y-4">
+    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+      <div class="flex items-center">
+        <span nz-icon nzType="alert" class="text-red-500 mr-2"></span>
+        <span>Low Stock Alert: Printer cartridge inventory below threshold</span>
+      </div>
+      <span class="text-sm text-slate-500">2 hours ago</span>
+    </div>
+    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+      <div class="flex items-center">
+        <span nz-icon nzType="dollar" class="text-amber-500 mr-2"></span>
+        <span>Payment Reminder: Supplier A payment due in 3 days</span>
+      </div>
+      <span class="text-sm text-slate-500">4 hours ago</span>
+    </div>
+    <div class="flex items-center justify-between p-4 bg-slate-50 rounded">
+      <div class="flex items-center">
+        <span nz-icon nzType="shopping-cart" class="text-green-500 mr-2"></span>
+        <span>New Order Alert: 3 new sales orders received</span>
+      </div>
+      <span class="text-sm text-slate-500">6 hours ago</span>
+    </div>
+  </div>
+</nz-card>

@@ -1,0 +1,61 @@
+:host {
+  display: block;
+
+  ::ng-deep {
+    .ant-card {
+      border-radius: 8px;
+      
+      .ant-card-head {
+        border-bottom: 1px solid #f0f0f0;
+        min-height: 48px;
+        padding: 0 24px;
+        
+        .ant-card-head-title {
+          padding: 12px 0;
+          font-size: 16px;
+          font-weight: 500;
+        }
+      }
+      
+      .ant-card-body {
+        padding: 24px;
+      }
+    }
+
+    .ant-statistic {
+      .ant-statistic-title {
+        font-size: 14px;
+        color: #8c8c8c;
+        margin-bottom: 8px;
+      }
+      
+      .ant-statistic-content {
+        font-size: 24px;
+        font-weight: 600;
+        
+        .ant-statistic-content-prefix {
+          font-size: 16px;
+          margin-right: 4px;
+        }
+      }
+    }
+
+    .text-primary-600 {
+      .ant-statistic-content {
+        color: #1890ff;
+      }
+    }
+
+    .text-amber-500 {
+      .ant-statistic-content {
+        color: #faad14;
+      }
+    }
+
+    .text-red-500 {
+      .ant-statistic-content {
+        color: #ff4d4f;
+      }
+    }
+  }
+}

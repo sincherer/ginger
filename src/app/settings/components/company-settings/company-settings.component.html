@@ -1,0 +1,185 @@
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-semibold text-slate-800 mb-6">Company Settings</h1>
+  
+  <nz-card>
+    <nz-tabset>
+      <!-- Company Information Tab -->
+      <nz-tab nzTitle="Company Information">
+        <form [formGroup]="companyForm" class="mt-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <nz-form-item>
+                <nz-form-label nzRequired>Company Name</nz-form-label>
+                <nz-form-control nzErrorTip="Please input company name!">
+                  <input nz-input formControlName="name" placeholder="Company Name" />
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-label nzRequired>Address</nz-form-label>
+                <nz-form-control nzErrorTip="Please input company address!">
+                  <textarea 
+                    nz-input 
+                    formControlName="address" 
+                    placeholder="Company Address" 
+                    [nzAutosize]="{ minRows: 3, maxRows: 5 }"
+                  ></textarea>
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-label nzRequired>Phone</nz-form-label>
+                <nz-form-control nzErrorTip="Please input phone number!">
+                  <input nz-input formControlName="phone" placeholder="Phone Number" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            
+            <div class="space-y-4">
+              <nz-form-item>
+                <nz-form-label nzRequired>Email</nz-form-label>
+                <nz-form-control nzErrorTip="Please input a valid email!">
+                  <input nz-input formControlName="email" placeholder="Email Address" />
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-label>Tax ID</nz-form-label>
+                <nz-form-control>
+                  <input nz-input formControlName="taxId" placeholder="Tax ID" />
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-label>Website</nz-form-label>
+                <nz-form-control nzErrorTip="Please input a valid website URL!">
+                  <input nz-input formControlName="website" placeholder="Website URL" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button 
+              nz-button 
+              nzType="primary" 
+              (click)="saveCompanyInfo()"
+              [disabled]="companyForm.invalid"
+            >
+              Save Company Information
+            </button>
+          </div>
+        </form>
+      </nz-tab>
+      
+      <!-- Print Settings Tab -->
+      <nz-tab nzTitle="Print Settings">
+        <form [formGroup]="printSettingsForm" class="mt-4">
+          <div class="space-y-6">
+            <nz-form-item>
+              <nz-form-label>Header Text</nz-form-label>
+              <nz-form-control>
+                <textarea 
+                  nz-input 
+                  formControlName="headerText" 
+                  placeholder="Text to appear at the top of printed documents" 
+                  [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+                ></textarea>
+              </nz-form-control>
+            </nz-form-item>
+            
+            <nz-form-item>
+              <nz-form-label>Footer Text</nz-form-label>
+              <nz-form-control>
+                <textarea 
+                  nz-input 
+                  formControlName="footerText" 
+                  placeholder="Text to appear at the bottom of printed documents" 
+                  [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+                ></textarea>
+              </nz-form-control>
+            </nz-form-item>
+            
+            <nz-divider></nz-divider>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <nz-form-item>
+                <nz-form-control>
+                  <label nz-checkbox formControlName="showLogo">Show Logo on Prints</label>
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-control>
+                  <label nz-checkbox formControlName="showAddress">Show Address on Prints</label>
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-control>
+                  <label nz-checkbox formControlName="showContact">Show Contact Info on Prints</label>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button 
+              nz-button 
+              nzType="primary" 
+              (click)="savePrintSettings()"
+            >
+              Save Print Settings
+            </button>
+          </div>
+        </form>
+      </nz-tab>
+      
+      <!-- Logo Upload Tab -->
+      <nz-tab nzTitle="Company Logo">
+        <div class="mt-4 space-y-6">
+          <div class="flex flex-col md:flex-row md:space-x-8">
+            <div class="md:w-1/2 space-y-4">
+              <div class="border-2 border-dashed border-slate-300 p-8 text-center rounded-md">
+                <nz-upload
+                  [nzBeforeUpload]="beforeUpload"
+                  [nzShowUploadList]="false"
+                  [nzFileList]="logoFile"
+                >
+                  <button nz-button>
+                    <span nz-icon nzType="upload"></span>
+                    Select Logo File
+                  </button>
+                </nz-upload>
+                <p class="mt-2 text-sm text-slate-500">Support for a single image file, less than 2MB</p>
+              </div>
+              
+              <div *ngIf="logoFile.length > 0" class="mt-4">
+                <p>Selected file: {{ logoFile[0].name }}</p>
+                <button 
+                  nz-button 
+                  nzType="primary" 
+                  class="mt-2"
+                  (click)="uploadLogo()"
+                >
+                  Upload Logo
+                </button>
+              </div>
+            </div>
+            
+            <div class="md:w-1/2 mt-6 md:mt-0">
+              <h3 class="text-lg font-medium mb-4">Logo Preview</h3>
+              <div class="border border-slate-200 rounded-md p-4 flex items-center justify-center bg-white" style="min-height: 200px;">
+                <img *ngIf="logoPreview" [src]="logoPreview" alt="Company Logo Preview" class="max-h-40" />
+                <div *ngIf="!logoPreview" class="text-slate-400">
+                  <span nz-icon nzType="picture" nzTheme="outline" style="font-size: 48px;"></span>
+                  <p class="mt-2">No logo uploaded</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card>
+</div>

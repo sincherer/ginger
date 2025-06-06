@@ -1,0 +1,108 @@
+<div class="container mx-auto p-6">
+  <!-- Role Management Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold text-slate-800">Role Management</h1>
+    <button 
+      *hasPermission="['users', 'create']"
+      nz-button 
+      nzType="primary"
+      (click)="showCreateCustomRoleModal()"
+      class="flex items-center">
+      <span nz-icon nzType="plus"></span>
+      Create Custom Role
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Roles List -->
+    <div class="lg:col-span-1">
+      <nz-card [nzTitle]="'Available Roles'">
+        <div class="space-y-2">
+          <div 
+            *ngFor="let role of roles"
+            (click)="selectRole(role)"
+            class="p-3 rounded-lg cursor-pointer transition-colors duration-200"
+            [class.bg-blue-50]="selectedRole?.id === role.id"
+            [class.hover:bg-slate-50]="selectedRole?.id !== role.id">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-medium text-slate-800">{{ role.name }}</h3>
+                <p class="text-sm text-slate-500">{{ role.description }}</p>
+              </div>
+              <span 
+                *ngIf="role.isCustom"
+                class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
+                Custom
+              </span>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <!-- Permissions Management -->
+    <div class="lg:col-span-2">
+      <nz-card 
+        [nzTitle]="'Permissions'"
+        [nzExtra]="selectedRole ? selectedRole.name + ' Permissions' : 'Select a role'">
+        <ng-container *ngIf="selectedRole; else selectRolePrompt">
+          <div class="space-y-6">
+            <div *ngFor="let permission of permissions" class="border-b border-slate-200 pb-4 last:border-0">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <h4 class="font-medium text-slate-800">{{ permission.name }}</h4>
+                  <p class="text-sm text-slate-500">{{ permission.description }}</p>
+                </div>
+              </div>
+              <div class="flex space-x-4 mt-2">
+                <div *ngFor="let action of permission.actions" class="flex items-center space-x-2">
+                  <nz-switch
+                    [ngModel]="hasPermissionForAction(permission, action)"
+                    (ngModelChange)="togglePermission(permission, action)"
+                    [nzDisabled]="!selectedRole.isCustom && selectedRole.id !== 'admin'"
+                  ></nz-switch>
+                  <span class="text-sm text-slate-600 capitalize">{{ action }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #selectRolePrompt>
+          <div class="text-center py-8 text-slate-500">
+            Please select a role to view and manage permissions
+          </div>
+        </ng-template>
+      </nz-card>
+    </div>
+  </div>
+</div>
+
+<!-- Create Custom Role Modal -->
+<nz-modal
+  [(nzVisible)]="isCustomRoleModalVisible"
+  [nzTitle]="'Create Custom Role'"
+  (nzOnCancel)="handleCustomRoleModalCancel()"
+  (nzOnOk)="handleCustomRoleModalOk()"
+  [nzOkText]="'Create'"
+  [nzCancelText]="'Cancel'">
+  <ng-container *nzModalContent>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Role Name</label>
+        <input 
+          nz-input 
+          [(ngModel)]="newCustomRole.name"
+          placeholder="Enter role name"
+          class="w-full">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+        <input 
+          nz-input 
+          [(ngModel)]="newCustomRole.description"
+          placeholder="Enter role description"
+          class="w-full">
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

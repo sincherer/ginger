@@ -1,0 +1,175 @@
+<nz-layout class="min-h-screen">
+  <nz-layout class="flex flex-col h-screen">
+    <!-- Top Navigation Bar -->
+    <nz-header class="bg-white shadow-sm px-6 flex items-center justify-between w-full flex-none">
+      <div class="flex items-center">
+        <h1 class="text-xl font-semibold text-slate-800">Ginger ERP</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- Settings Toggle Button -->
+        <button 
+          (click)="toggleSettingsMode()"
+          class="flex items-center text-slate-600 hover:text-slate-800 transition-colors cursor-pointer px-3 py-2 rounded-md hover:bg-slate-100"
+          [class.bg-blue-50]="isSettingsMode"
+          [class.text-blue-600]="isSettingsMode"
+          routerLink="/settings/company">
+          <span nz-icon nzType="setting" nzTheme="outline" class="mr-1"></span>
+          <span>Settings</span>
+        </button>
+        
+        <!-- User Profile Dropdown -->
+        <div class="relative">
+          <a 
+            class="flex items-center text-slate-600 hover:text-slate-800 transition-colors cursor-pointer"
+            (click)="toggleProfileMenu()">
+            <span class="mr-1">{{ username }}</span>
+            <span nz-icon nzType="user" nzTheme="outline"></span>
+          </a>
+          
+          <!-- Profile Dropdown Menu -->
+          <div *ngIf="showProfileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+            <a routerLink="/settings/profile" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
+              Profile Settings
+            </a>
+            <a (click)="logout()" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 cursor-pointer">
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nz-header>
+
+    <nz-layout class="flex-1 flex">
+      <!-- Sidebar Navigation -->
+      <nz-sider 
+        [(nzCollapsed)]="isCollapsed" 
+        [nzCollapsible]="false" 
+        [nzWidth]="240" 
+        [nzCollapsedWidth]="80" 
+        class="bg-white shadow-sm">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-lg font-semibold text-slate-800 flex items-center space-x-2">
+            <span nz-icon [nzType]="isSettingsMode ? 'setting' : 'appstore'" nzTheme="outline"></span>
+            <span *ngIf="!isCollapsed">{{ isSettingsMode ? 'Settings' : 'Menu' }}</span>
+          </span>
+          <!-- Custom Collapse/Expand Button -->
+          <button 
+            (click)="isCollapsed = !isCollapsed"
+            class="flex items-center justify-center w-8 h-8 rounded hover:bg-slate-100 transition-colors duration-200 text-slate-600 hover:text-slate-800">
+            <span nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" class="text-base"></span>
+          </button>
+        </div>
+        
+        <!-- Settings Menu -->
+        <ul nz-menu 
+            *ngIf="isSettingsMode"
+            nzMode="inline" 
+            [nzInlineCollapsed]="isCollapsed"
+            class="border-0">
+          
+          <!-- Back to Main Menu -->
+          <li nz-menu-item (click)="toggleSettingsMode()">
+            <span nz-icon nzType="arrow-left"></span>
+            <span>Back to Main</span>
+          </li>
+          
+          <!-- Company Settings -->
+          <li nz-menu-item 
+              routerLink="/settings/company" 
+              *hasPermission="['settings', 'view']">
+            <span nz-icon nzType="bank"></span>
+            <span>Company Settings</span>
+          </li>
+          
+          <!-- Role Management -->
+          <li nz-menu-item 
+              routerLink="/role-management" 
+              *hasPermission="['users', 'view']">
+            <span nz-icon nzType="team"></span>
+            <span>Role Management</span>
+          </li>
+          
+          <!-- User Management (Admin Only) -->
+          <li nz-menu-item 
+              routerLink="/user-management" 
+              *hasPermission="['admin', 'manage_users']">
+            <span nz-icon nzType="user"></span>
+            <span>User Management</span>
+          </li>
+          
+          <!-- System Settings -->
+          <li nz-menu-item 
+              routerLink="/settings/system" 
+              *hasPermission="['admin', 'system_settings']">
+            <span nz-icon nzType="control"></span>
+            <span>System Settings</span>
+          </li>
+          
+        </ul>
+        
+        <!-- Main Menu -->
+        <ul nz-menu 
+            *ngIf="!isSettingsMode"
+            nzMode="inline" 
+            [nzInlineCollapsed]="isCollapsed"
+            class="border-0">
+          
+          <li nz-menu-item routerLink="/dashboard" *hasPermission="['dashboard', 'view']">
+            <span nz-icon nzType="dashboard"></span>
+            <span>Dashboard</span>
+          </li>
+          
+          <li nz-submenu nzTitle="Sales" nzIcon="shopping-cart" *hasPermission="['sales', 'view']">
+            <ul>
+              <li nz-menu-item routerLink="/sales/orders" *hasPermission="['sales', 'view']">Sales Orders</li>
+              <li nz-menu-item routerLink="/sales/returns" *hasPermission="['sales', 'view']">Sales Returns</li>
+            </ul>
+          </li>
+          
+          <li nz-submenu nzTitle="Purchase" nzIcon="shopping" *hasPermission="['purchase', 'view']">
+            <ul>
+              <li nz-menu-item routerLink="/purchase/orders" *hasPermission="['purchase', 'view']">Purchase Orders</li>
+              <li nz-menu-item routerLink="/purchase/returns" *hasPermission="['purchase', 'view']">Purchase Returns</li>
+            </ul>
+          </li>
+          
+          <li nz-submenu nzTitle="Inventory" nzIcon="inbox" *hasPermission="['inventory', 'view']">
+            <ul>
+              <li nz-menu-item routerLink="/inventory/query" *hasPermission="['inventory', 'view']">Inventory Query</li>
+              <li nz-menu-item routerLink="/inventory/stock-in" *hasPermission="['inventory', 'create']">Stock In</li>
+              <li nz-menu-item routerLink="/inventory/stock-out" *hasPermission="['inventory', 'create']">Stock Out</li>
+            </ul>
+          </li>
+          
+          <li nz-submenu nzTitle="Financial" nzIcon="dollar" *hasPermission="['financial', 'view']">
+            <ul>
+              <li nz-menu-item routerLink="/financial/receivables" *hasPermission="['financial', 'view']">Receivables</li>
+              <li nz-menu-item routerLink="/financial/payables" *hasPermission="['financial', 'view']">Payables</li>
+              <li nz-menu-item routerLink="/financial/reports" *hasPermission="['financial', 'view']">Financial Reports</li>
+            </ul>
+          </li>
+          
+          <li nz-submenu nzTitle="Accounts Payable" nzIcon="credit-card" *hasPermission="['accounts', 'view']">
+            <ul>
+              <li nz-menu-item routerLink="/accounts/reminders" *hasPermission="['accounts', 'view']">Payment Reminders</li>
+              <li nz-menu-item routerLink="/accounts/settings" *hasPermission="['accounts', 'edit']">Reminder Settings</li>
+            </ul>
+          </li>
+          
+          <li nz-submenu nzTitle="Reports" nzIcon="bar-chart" *hasPermission="['reports', 'view']">
+            <ul>
+              <li nz-menu-item routerLink="/reports/sales" *hasPermission="['reports', 'view']">Monthly Sales Report</li>
+              <li nz-menu-item routerLink="/reports/inventory" *hasPermission="['reports', 'view']">Inventory Report</li>
+              <li nz-menu-item routerLink="/reports/payments" *hasPermission="['reports', 'view']">Customer Payments Report</li>
+            </ul>
+          </li>
+        </ul>
+      </nz-sider>
+
+      <!-- Main Content Area -->
+      <nz-content class="p-6 bg-slate-50 flex-1 overflow-y-auto">
+        <router-outlet></router-outlet>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</nz-layout>

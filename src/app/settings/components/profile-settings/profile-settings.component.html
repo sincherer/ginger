@@ -1,0 +1,122 @@
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-semibold text-slate-800 mb-6">Profile Settings</h1>
+  
+  <nz-card>
+    <nz-tabset>
+      <!-- Personal Information Tab -->
+      <nz-tab nzTitle="Personal Information">
+        <form [formGroup]="profileForm" class="mt-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <nz-form-item>
+                <nz-form-label>Username</nz-form-label>
+                <nz-form-control>
+                  <input nz-input formControlName="username" placeholder="Username" />
+                </nz-form-control>
+                <div class="text-xs text-slate-500 mt-1">Username cannot be changed</div>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-label nzRequired>Display Name</nz-form-label>
+                <nz-form-control nzErrorTip="Please input your display name!">
+                  <input nz-input formControlName="displayName" placeholder="Display Name" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            
+            <div class="space-y-4">
+              <nz-form-item>
+                <nz-form-label nzRequired>Email</nz-form-label>
+                <nz-form-control nzErrorTip="Please input a valid email!">
+                  <input nz-input formControlName="email" placeholder="Email Address" />
+                </nz-form-control>
+              </nz-form-item>
+              
+              <nz-form-item>
+                <nz-form-label>Phone</nz-form-label>
+                <nz-form-control nzErrorTip="Please input a valid phone number!">
+                  <input nz-input formControlName="phone" placeholder="Phone Number" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button 
+              nz-button 
+              nzType="primary" 
+              (click)="saveProfile()"
+              [disabled]="profileForm.invalid"
+            >
+              Save Profile
+            </button>
+          </div>
+        </form>
+      </nz-tab>
+      
+      <!-- Change Password Tab -->
+      <nz-tab nzTitle="Change Password">
+        <form [formGroup]="passwordForm" class="mt-4 max-w-md">
+          <div class="space-y-4">
+            <nz-form-item>
+              <nz-form-label nzRequired>Current Password</nz-form-label>
+              <nz-form-control nzErrorTip="Please input your current password!">
+                <input 
+                  nz-input 
+                  type="password" 
+                  formControlName="currentPassword" 
+                  placeholder="Current Password" 
+                />
+              </nz-form-control>
+            </nz-form-item>
+            
+            <nz-divider></nz-divider>
+            
+            <nz-form-item>
+              <nz-form-label nzRequired>New Password</nz-form-label>
+              <nz-form-control nzErrorTip="Password must be at least 8 characters!">
+                <input 
+                  nz-input 
+                  type="password" 
+                  formControlName="newPassword" 
+                  placeholder="New Password" 
+                />
+              </nz-form-control>
+            </nz-form-item>
+            
+            <nz-form-item>
+              <nz-form-label nzRequired>Confirm New Password</nz-form-label>
+              <nz-form-control [nzErrorTip]="passwordErrorTpl">
+                <input 
+                  nz-input 
+                  type="password" 
+                  formControlName="confirmPassword" 
+                  placeholder="Confirm New Password" 
+                />
+                <ng-template #passwordErrorTpl>
+                  <ng-container *ngIf="passwordForm.hasError('mismatch'); else defaultError">
+                    Passwords do not match!
+                  </ng-container>
+                  <ng-template #defaultError>
+                    Please confirm your new password!
+                  </ng-template>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div class="mt-6">
+            <button 
+              nz-button 
+              nzType="primary" 
+              (click)="changePassword()"
+              [disabled]="passwordForm.invalid"
+            >
+              Change Password
+            </button>
+          </div>
+        </form>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card>
+</div>

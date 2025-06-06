@@ -1,0 +1,25 @@
+// Additional styles for company settings component
+
+:host ::ng-deep {
+  // Tab styles
+  .ant-tabs-nav {
+    margin-bottom: 24px;
+  }
+  
+  // Form styles
+  .ant-form-item-label {
+    font-weight: 500;
+  }
+  
+  // Upload area styles
+  nz-upload {
+    display: block;
+    width: 100%;
+    
+    .ant-upload.ant-upload-select {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
