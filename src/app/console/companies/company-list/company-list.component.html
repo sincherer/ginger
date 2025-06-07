@@ -71,17 +71,13 @@
             Email
             <i class="fas" [ngClass]="getSortIcon('email')"></i>
           </th>
-          <th (click)="onSortChange('phone')">
-            Phone
-            <i class="fas" [ngClass]="getSortIcon('phone')"></i>
-          </th>
-          <th (click)="onSortChange('active')">
+         
+          <th>
             Status
-            <i class="fas" [ngClass]="getSortIcon('active')"></i>
           </th>
-          <th (click)="onSortChange('createdAt')">
+          <th (click)="onSortChange('created_at')">
             Created
-            <i class="fas" [ngClass]="getSortIcon('createdAt')"></i>
+            <i class="fas" [ngClass]="getSortIcon('created_at')"></i>
           </th>
           <th>Actions</th>
         </tr>
@@ -102,11 +98,11 @@
           <td>{{ company.email }}</td>
           <td>{{ company.phone }}</td>
           <td>
-            <span class="status" [ngClass]="company.active ? 'active' : 'inactive'">
-              {{ company.active ? 'Active' : 'Inactive' }}
+            <span class="status" [ngClass]="company.is_active ? 'active' : 'inactive'">
+              {{ company.is_active ? 'Active' : 'Inactive' }}
             </span>
           </td>
-          <td>{{ company.createdAt | date:'medium' }}</td>
+          <td>{{ company.created_at | date:'medium' }}</td>
           <td>
             <div class="action-buttons">
               <button class="action-btn view-btn" (click)="navigateToDetail(company.id); $event.stopPropagation()">

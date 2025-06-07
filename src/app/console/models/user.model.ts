@@ -4,25 +4,25 @@ export interface ConsoleUser {
   id: string;
   username: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   role: 'admin' | 'user' | 'console_admin';
-  companyId: string;
-  active: boolean;
-  lastLogin?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  company_id: string;
+  is_active: boolean;
+  last_login?: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface UserInvitation {
   id: string;
   email: string;
-  companyId: string;
-  roleId: string;
-  invitedBy: string; // User ID who sent the invitation
+  company_id: string;
+  role_id: string;
+  invited_by: string; // User ID who sent the invitation
   status: InvitationStatus;
-  expiresAt: Date;
-  createdAt: Date;
+  expires_at: Date;
+  created_at: Date;
   token: string;
 }
 

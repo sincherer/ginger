@@ -1,17 +1,9 @@
-export interface Company {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  taxId: string;
-  website: string;
-  createdAt: Date;
-  updatedAt: Date;
-  active: boolean;
-  logo?: string;
-}
+import type { Company as BaseCompany } from '../../core/models/company.model';
 
+// Re-export the Company type
+export type { Company } from '../../core/models/company.model';
+
+// Add any console-specific interfaces
 export interface CompanySettings {
   companyId: string;
   printSettings: PrintSettings;
@@ -33,7 +25,6 @@ export interface FeatureSettings {
 export interface ModuleFeature {
   moduleId: string;
   enabled: boolean;
-  // Additional module-specific settings
   settings?: Record<string, any>;
 }
 

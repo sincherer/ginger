@@ -22,6 +22,8 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
 
 // Services
 import { RbacService } from './services/rbac.service';
+import { SupabaseService } from './services/supabase.service';
+import { BaseDataService } from './services/base-data.service';
 
 // Guards
 import { RbacGuard } from './guards/rbac.guard';
@@ -59,7 +61,9 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
   ],
   providers: [
     RbacService,
-    RbacGuard
+    RbacGuard,
+    SupabaseService,
+    BaseDataService
   ]
 })
 export class CoreModule { }

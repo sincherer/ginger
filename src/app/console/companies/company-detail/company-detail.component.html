@@ -1,0 +1,423 @@
+<div class="company-detail-container">
+  <header class="page-header">
+    <div class="header-content">
+      <div class="company-header" *ngIf="company">
+        <div class="company-logo" *ngIf="company.logo">
+          <img [src]="company.logo" alt="{{ company.name }} logo">
+        </div>
+        <div class="company-logo-placeholder" *ngIf="!company.logo">
+          {{ company?.name?.charAt(0) }}
+        </div>
+        <div class="plan-badge large" [ngClass]="billingCycle?.plan?.toLowerCase()">
+          {{ billingCycle?.plan }}
+        </div>
+        <div class="company-info">
+          <h1>{{ company.name }}</h1>
+          <div class="company-meta">
+            <span class="status" [ngClass]="company.is_active ? 'active' : 'inactive'">
+              {{ company.is_active ? 'Active' : 'Inactive' }}
+            </span>
+            <span class="created-date">
+              <i class="fas fa-calendar-alt"></i> Created {{ company.created_at | date:'mediumDate' }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="skeleton-header" *ngIf="!company && !error">
+        <div class="skeleton-logo"></div>
+        <div class="skeleton-info">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-meta"></div>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="loading">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+      <button class="secondary-btn" (click)="editCompany()" [disabled]="!company">
+        <i class="fas fa-edit"></i> Edit Company
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading company data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="company && !loading" class="company-content">
+    <div class="tabs-container">
+      <div class="tabs">
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'overview'}"
+          (click)="setActiveTab('overview')"
+        >
+          <i class="fas fa-info-circle"></i> Overview
+        </button>
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'users'}"
+          (click)="setActiveTab('users')"
+        >
+          <i class="fas fa-users"></i> Users
+          <span class="badge">{{ users.length }}</span>
+        </button>
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'features'}"
+          (click)="setActiveTab('features')"
+        >
+          <i class="fas fa-toggle-on"></i> Features
+        </button>
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'billing'}"
+          (click)="setActiveTab('billing')"
+        >
+          <i class="fas fa-credit-card"></i> Billing
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'overview'">
+      <div class="content-header">
+        <h2>Company Overview</h2>
+      </div>
+
+      <div class="overview-layout">
+        <div class="overview-main">
+          <div class="info-card">
+            <h3>Company Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Company Name</div>
+                <div class="info-value">{{ company.name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Email Address</div>
+                <div class="info-value">{{ company.email }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Phone Number</div>
+                <div class="info-value">{{ company.phone || 'Not provided' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Website</div>
+                <div class="info-value">
+                  <a *ngIf="company.website" [href]="company.website" target="_blank">{{ company.website }}</a>
+                  <span *ngIf="!company.website">Not provided</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Tax ID / VAT Number</div>
+                <div class="info-value">{{ company.taxId || 'Not provided' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                  <span class="status" [ngClass]="company.is_active ? 'active' : 'inactive'">
+                    {{ company.is_active ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>Address</h3>
+            <div class="address-content">
+              <p *ngIf="company.address">{{ company.address }}</p>
+              <p *ngIf="!company.address" class="empty-info">No address provided</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-sidebar">
+          <div class="info-card">
+            <h3>Quick Stats</h3>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-value">{{ users.length }}</div>
+                <div class="stat-label">Users</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ invitations.length }}</div>
+                <div class="stat-label">Pending Invitations</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ features.filter(f => f.enabled).length }}</div>
+                <div class="stat-label">Active Features</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>Subscription</h3>
+            <div class="subscription-info" *ngIf="billingCycle">
+              <div class="plan-badge" [ngClass]="billingCycle.plan.toLowerCase()">
+                {{ billingCycle.plan }}
+              </div>
+              <div class="subscription-details">
+                <div class="detail-item">
+                  <span class="detail-label">Status:</span>
+                  <span class="detail-value status" [ngClass]="billingCycle.status.toLowerCase()">
+                    {{ billingCycle.status }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Renewal Date:</span>
+                  <span class="detail-value">{{ billingCycle.renewal_date | date:'mediumDate' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Price:</span>
+                  <span class="detail-value">{{ billingCycle.price | currency }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Auto Renewal:</span>
+                  <span class="detail-value">{{ billingCycle.auto_renew ? 'Yes' : 'No' }}</span>
+                </div>
+              </div>
+              <button class="action-btn" (click)="manageBilling()">
+                <i class="fas fa-cog"></i> Manage Subscription
+              </button>
+            </div>
+            <div class="empty-info" *ngIf="!billingCycle">
+              <p>No subscription information available</p>
+              <button class="primary-btn" (click)="manageBilling()">
+                <i class="fas fa-plus"></i> Add Subscription
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'users'">
+      <div class="content-header">
+        <h2>Company Users</h2>
+        <button class="primary-btn" (click)="inviteUser()">
+          <i class="fas fa-user-plus"></i> Invite User
+        </button>
+      </div>
+
+      <div class="users-container">
+        <div class="info-card">
+          <h3>Active Users</h3>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Last Login</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>
+                    <div class="user-name">
+                      <div class="user-avatar">
+                        {{ user.first_name.charAt(0) }}{{ user.last_name.charAt(0) }}
+                      </div>
+                      <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    </div>
+                  </td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>{{ user.last_login ? (user.last_login | date:'medium') : 'Never' }}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn view-btn" (click)="viewUser(user.id)">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="action-btn edit-btn" (click)="editUser(user.id)">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="action-btn impersonate-btn" (click)="impersonateUser(user.id)">
+                        <i class="fas fa-user-secret"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="users.length === 0">
+                  <td colspan="5" class="empty-state">
+                    No users found for this company
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>Pending Invitations</h3>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Invited By</th>
+                  <th>Expires</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let invitation of invitations">
+                  <td>{{ invitation.email }}</td>
+                  <td>{{ invitation.role_id }}</td>
+                  <td>{{ invitation.invited_by }}</td>
+                  <td>{{ invitation.expires_at | date:'medium' }}</td>
+                  <td>
+                    <span class="status" [ngClass]="invitation.status.toLowerCase()">
+                      {{ invitation.status }}
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="invitations.length === 0">
+                  <td colspan="5" class="empty-state">
+                    No pending invitations
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'features'">
+      <div class="content-header">
+        <h2>Company Features</h2>
+        <button class="primary-btn" (click)="manageFeatures()">
+          <i class="fas fa-cog"></i> Manage Features
+        </button>
+      </div>
+
+      <div class="features-container">
+        <div class="info-card">
+          <h3>Available Features</h3>
+          <div class="features-grid">
+            <div class="feature-card" *ngFor="let feature of features">
+              <div class="feature-header">
+                <div class="feature-icon">
+                  <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div class="feature-toggle">
+                  <label class="toggle-switch">
+                    <input 
+                      type="checkbox" 
+                      [checked]="feature.enabled"
+                      (change)="onFeatureToggle(feature.feature_id, $event)"
+                    >
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="feature-name">{{ feature.feature_id }}</div>
+              <div class="feature-status">
+                <span class="status" [ngClass]="feature.enabled ? 'active' : 'inactive'">
+                  {{ feature.enabled ? 'Enabled' : 'Disabled' }}
+                </span>
+              </div>
+            </div>
+            <div class="empty-state" *ngIf="features.length === 0">
+              <i class="fas fa-puzzle-piece"></i>
+              <p>No features configured for this company</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'billing'">
+      <div class="content-header">
+        <h2>Billing Information</h2>
+        <button class="primary-btn" (click)="manageBilling()">
+          <i class="fas fa-cog"></i> Manage Billing
+        </button>
+      </div>
+
+      <div class="billing-container">
+        <div class="info-card" *ngIf="billingCycle">
+          <h3>Current Subscription</h3>
+          <div class="subscription-details-full">
+            <div class="plan-info">
+              <div class="plan-badge large" [ngClass]="billingCycle?.plan?.toLowerCase()">
+                {{ billingCycle.plan }}
+              </div>
+              <div class="plan-price">
+                <span class="price">{{ billingCycle.price | currency }}</span>
+                <span class="cycle">/ {{ billingCycle.interval }}</span>
+              </div>
+            </div>
+
+            <div class="subscription-grid">
+              <div class="subscription-item">
+                <div class="item-label">Status</div>
+                <div class="item-value">
+                  <span class="status" [ngClass]="billingCycle.status.toLowerCase()">
+                    {{ billingCycle.status }}
+                  </span>
+                </div>
+              </div>
+              <div class="subscription-item">
+                <div class="item-label">Start Date</div>
+                <div class="item-value">{{ billingCycle.start_date | date:'mediumDate' }}</div>
+              </div>
+              <div class="subscription-item">
+                <div class="item-label">End Date</div>
+                <div class="item-value">{{ billingCycle.end_date | date:'mediumDate' }}</div>
+              </div>
+              <div class="subscription-item">
+                <div class="item-label">Next Renewal</div>
+                <div class="item-value">{{ billingCycle.renewal_date | date:'mediumDate' }}</div>
+              </div>
+              <div class="subscription-item">
+                <div class="item-label">Auto Renew</div>
+                <div class="item-value">{{ billingCycle.auto_renew ? 'Yes' : 'No' }}</div>
+              </div>
+              <div class="subscription-item">
+                <div class="item-label">Billing ID</div>
+                <div class="item-value">{{ billingCycle.id }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card" *ngIf="!billingCycle">
+          <h3>No Subscription</h3>
+          <div class="empty-billing">
+            <i class="fas fa-credit-card"></i>
+            <p>This company doesn't have an active subscription</p>
+            <button class="primary-btn" (click)="manageBilling()">
+              <i class="fas fa-plus"></i> Add Subscription
+            </button>
+          </div>
+        </div>
+
+        <!-- Billing History would go here in a real app -->
+        <div class="info-card">
+          <h3>Billing History</h3>
+          <div class="empty-state">
+            <i class="fas fa-history"></i>
+            <p>No billing history available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

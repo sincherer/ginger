@@ -1,0 +1,202 @@
+<div class="user-list-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Users</h1>
+      <p>Manage all users across companies</p>
+    </div>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="refreshUsers()" [disabled]="loading">
+        <i class="material-icons">refresh</i>
+        <span>Refresh</span>
+      </button>
+      <button class="primary-btn" (click)="inviteUser()">
+        <i class="material-icons">person_add</i>
+        <span>Invite User</span>
+      </button>
+      <button class="secondary-btn" (click)="createUser()">
+        <i class="material-icons">add</i>
+        <span>Add User</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-container">
+    <div class="search-box">
+      <i class="material-icons">search</i>
+      <input 
+        type="text" 
+        placeholder="Search users by name, email or company" 
+        (input)="onSearch($event)"
+        [value]="searchTerm"
+      >
+    </div>
+    
+    <div class="filter-options">
+      <div class="filter-label">Status:</div>
+      <div class="filter-buttons">
+        <button 
+          [class.active]="statusFilter === 'all'"
+          (click)="onStatusChange('all')"
+        >All</button>
+        <button 
+          [class.active]="statusFilter === 'active'"
+          (click)="onStatusChange('active')"
+        >Active</button>
+        <button 
+          [class.active]="statusFilter === 'inactive'"
+          (click)="onStatusChange('inactive')"
+        >Inactive</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <i class="material-icons">error</i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div class="content-container" *ngIf="!loading && !error">
+    <div class="table-container" *ngIf="filteredUsers.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th (click)="onSort('name')" class="sortable">
+              <div class="th-content">
+                <span>Name</span>
+                <i class="material-icons">{{ getSortIcon('name') }}</i>
+              </div>
+            </th>
+            <th (click)="onSort('email')" class="sortable">
+              <div class="th-content">
+                <span>Email</span>
+                <i class="material-icons">{{ getSortIcon('email') }}</i>
+              </div>
+            </th>
+            <th (click)="onSort('company')" class="sortable">
+              <div class="th-content">
+                <span>Company</span>
+                <i class="material-icons">{{ getSortIcon('company') }}</i>
+              </div>
+            </th>
+            <th (click)="onSort('role')" class="sortable">
+              <div class="th-content">
+                <span>Role</span>
+                <i class="material-icons">{{ getSortIcon('role') }}</i>
+              </div>
+            </th>
+            <th (click)="onSort('last_login')" class="sortable">
+              <div class="th-content">
+                <span>Last Login</span>
+                <i class="material-icons">{{ getSortIcon('last_login') }}</i>
+              </div>
+            </th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" (click)="viewUser(user.id)">
+            <td>
+              <div class="user-name">
+                <div class="user-avatar">{{ getInitials(user.first_name, user.last_name) }}</div>
+                <span>{{ user.first_name }} {{ user.last_name }}</span>
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.company?.name || 'N/A' }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.last_login ? formatDate(user.last_login) : '-' }}</td>
+            <td>
+              <span class="status" [ngClass]="user.is_active ? 'active' : 'inactive'">
+                {{ user.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn view-btn" (click)="viewUser(user.id); $event.stopPropagation()">
+                  <i class="material-icons">visibility</i>
+                </button>
+                <button class="action-btn edit-btn" (click)="editUser(user.id, $event)">
+                  <i class="material-icons">edit</i>
+                </button>
+                <button class="action-btn impersonate-btn" (click)="impersonateUser(user.id, $event)">
+                  <i class="material-icons">account_circle</i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredUsers.length === 0 && users.length > 0">
+      <i class="material-icons">search_off</i>
+      <p>No users match your search criteria</p>
+      <button class="secondary-btn" (click)="searchTerm = ''; statusFilter = 'all'; applyFilters()">
+        <i class="material-icons">clear</i>
+        <span>Clear Filters</span>
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="users.length === 0">
+      <i class="material-icons">people</i>
+      <p>No users have been added yet</p>
+      <div class="action-buttons">
+        <button class="primary-btn" (click)="inviteUser()">
+          <i class="material-icons">person_add</i>
+          <span>Invite User</span>
+        </button>
+        <button class="secondary-btn" (click)="createUser()">
+          <i class="material-icons">add</i>
+          <span>Add User</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="invitations-section" *ngIf="invitations.length > 0 && !loading && !error">
+    <h2>Pending Invitations</h2>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Invited On</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let invitation of invitations">
+            <td>{{ invitation.email }}</td>
+            <td>{{ invitation.company?.name || 'N/A' }}</td>
+            <td>{{ invitation.role_id }}</td>
+            <td>{{ formatDate(invitation.created_at) }}</td>
+            <td>
+              <span class="status" [ngClass]="invitation.status.toLowerCase()">
+                {{ invitation.status }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn edit-btn">
+                  <i class="material-icons">refresh</i>
+                </button>
+                <button class="action-btn delete-btn">
+                  <i class="material-icons">delete</i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

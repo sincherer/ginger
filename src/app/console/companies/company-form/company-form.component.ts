@@ -47,7 +47,7 @@ export class CompanyFormComponent implements OnInit {
       taxId: ['', Validators.maxLength(50)],
       website: ['', Validators.maxLength(100)],
       logo: [''],
-      active: [true]
+      is_active: [true]
     });
   }
 
@@ -65,7 +65,7 @@ export class CompanyFormComponent implements OnInit {
           taxId: company.taxId,
           website: company.website,
           logo: company.logo,
-          active: company.active
+          is_active: company.is_active
         });
 
         if (company.logo) {
@@ -115,7 +115,7 @@ export class CompanyFormComponent implements OnInit {
           
           // Create initial billing cycle with free plan
           this.consoleService.createBillingCycle({
-            companyId: company.id,
+            company_id: company.id,
             plan: BillingPlan.FREE
           }).subscribe();
 

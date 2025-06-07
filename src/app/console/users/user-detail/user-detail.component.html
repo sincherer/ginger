@@ -1,0 +1,264 @@
+<div class="user-detail-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div *ngIf="!loading && user" class="user-header">
+        <div class="user-avatar">
+          {{ getInitials(user.first_name, user.last_name) }}
+        </div>
+        <div class="user-info">
+          <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+          <div class="user-meta">
+            <span class="status" [ngClass]="getStatusClass()">
+              {{ getStatusText() }}
+            </span>
+            <span class="email">
+              <i class="material-icons">email</i>
+              {{ user.email }}
+            </span>
+            <span class="company" *ngIf="user.company">
+              <i class="material-icons">business</i>
+              {{ getCompanyName() }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="skeleton-header">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-info">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-meta"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions" *ngIf="!loading">
+      <button class="refresh-btn" (click)="refreshUser()" [disabled]="loading">
+        <i class="material-icons">refresh</i>
+        <span>Refresh</span>
+      </button>
+      <button class="secondary-btn" (click)="editUser()">
+        <i class="material-icons">edit</i>
+        <span>Edit User</span>
+      </button>
+      <button class="primary-btn" (click)="impersonateUser()">
+        <i class="material-icons">account_circle</i>
+        <span>Impersonate</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading user information...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <i class="material-icons">error</i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div class="user-content" *ngIf="!loading && user && !error">
+    <div class="tabs-container">
+      <div class="tabs">
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'overview'}"
+          (click)="switchTab('overview')"
+        >
+          <i class="material-icons">person</i>
+          <span>Overview</span>
+        </button>
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'sessions'}"
+          (click)="switchTab('sessions')"
+        >
+          <i class="material-icons">devices</i>
+          <span>Sessions</span>
+        </button>
+        <button 
+          class="tab" 
+          [ngClass]="{'active': activeTab === 'activity'}"
+          (click)="switchTab('activity')"
+        >
+          <i class="material-icons">history</i>
+          <span>Activity</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'overview'">
+      <div class="overview-layout">
+        <div class="overview-main">
+          <div class="info-card">
+            <h3>User Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Full Name</div>
+                <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ user.email }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Company</div>
+                <div class="info-value">{{ getCompanyName() }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Role</div>
+                <div class="info-value">{{ user.role }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                  <span class="status" [ngClass]="getStatusClass()">
+                    {{ getStatusText() }}
+                  </span>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Last Login</div>
+                <div class="info-value">{{ formatDate(user.last_login) }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Created On</div>
+                <div class="info-value">{{ formatDate(user.created_at) }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Updated On</div>
+                <div class="info-value">{{ formatDate(user.updated_at) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-sidebar">
+          <div class="info-card">
+            <h3>Quick Actions</h3>
+            <div class="action-buttons">
+              <button class="action-btn" (click)="editUser()">
+                <i class="material-icons">edit</i>
+                <span>Edit User</span>
+              </button>
+              <button class="action-btn" (click)="impersonateUser()">
+                <i class="material-icons">account_circle</i>
+                <span>Impersonate User</span>
+              </button>
+              <button class="action-btn" (click)="switchTab('sessions')">
+                <i class="material-icons">devices</i>
+                <span>View Sessions</span>
+              </button>
+              <button class="action-btn" (click)="switchTab('activity')">
+                <i class="material-icons">history</i>
+                <span>View Activity</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sessions Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'sessions'">
+      <div class="content-header">
+        <h2>Active Sessions</h2>
+        <button class="secondary-btn" (click)="terminateAllSessions()" *ngIf="sessions.length > 0">
+          <i class="material-icons">block</i>
+          <span>Terminate All Sessions</span>
+        </button>
+      </div>
+
+      <div class="loading-container" *ngIf="loadingSessions">
+        <div class="spinner"></div>
+        <p>Loading sessions...</p>
+      </div>
+
+      <div class="table-container" *ngIf="!loadingSessions && sessions.length > 0">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Session ID</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>IP Address</th>
+              <th>User Agent</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let session of sessions">
+              <td>{{ session.id }}</td>
+              <td>{{ formatDate(session.startTime) }}</td>
+              <td>{{ formatDate(session.endTime) }}</td>
+              <td>{{ session.ipAddress }}</td>
+              <td class="user-agent">{{ session.userAgent }}</td>
+              <td>
+                <span class="status" [ngClass]="session.active ? 'active' : 'inactive'">
+                  {{ session.active ? 'Active' : 'Terminated' }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button 
+                    class="action-btn terminate-btn" 
+                    *ngIf="session.active"
+                    (click)="terminateSession(session.id)"
+                  >
+                    <i class="material-icons">block</i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingSessions && sessions.length === 0">
+        <i class="material-icons">devices</i>
+        <p>No sessions found for this user</p>
+      </div>
+    </div>
+
+    <!-- Activity Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'activity'">
+      <div class="content-header">
+        <h2>Activity History</h2>
+      </div>
+
+      <div class="loading-container" *ngIf="loadingActivity">
+        <div class="spinner"></div>
+        <p>Loading activity logs...</p>
+      </div>
+
+      <div class="table-container" *ngIf="!loadingActivity && activityLogs.length > 0">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Timestamp</th>
+              <th>Details</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of activityLogs">
+              <td>{{ log.action }}</td>
+              <td>{{ formatDate(log.timestamp) }}</td>
+              <td>{{ log.details }}</td>
+              <td>{{ log.ipAddress }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingActivity && activityLogs.length === 0">
+        <i class="material-icons">history</i>
+        <p>No activity logs found for this user</p>
+      </div>
+    </div>
+  </div>
+</div>

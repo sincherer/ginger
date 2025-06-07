@@ -2,18 +2,18 @@ import { BillingPlan, BillingStatus } from './company.model';
 
 export interface BillingCycle {
   id: string;
-  companyId: string;
+  company_id: string;
   plan: BillingPlan;
   status: BillingStatus;
-  startDate: Date;
-  endDate: Date;
-  renewalDate: Date;
+  start_date: Date;
+  end_date: Date;
+  renewal_date: Date;
   price: number;
   currency: string;
   interval: 'monthly' | 'quarterly' | 'annual';
-  autoRenew: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  auto_renew: boolean;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface BillingPlanDetails {

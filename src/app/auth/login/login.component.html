@@ -6,19 +6,21 @@
     
     <h2 class="login-title">Sign In</h2>
     
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
         <div class="input-icon-wrapper">
           <i class="input-icon user-icon"></i>
           <input
-            id="username"
-            name="username"
-            type="text"
-            [(ngModel)]="username"
-            required
-            placeholder="Username"
-            autocomplete="username"
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Email"
+            autocomplete="email"
           />
+          <div class="error-message" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors">
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+          </div>
         </div>
       </div>
       
@@ -28,16 +30,18 @@
           <input
             id="password"
             type="password"
-            name="password"
-            [(ngModel)]="password"
-            required
+            formControlName="password"
             placeholder="Password"
             autocomplete="current-password"
           />
+          <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors">
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
         </div>
       </div>
       
-      <button type="submit" class="login-button" [disabled]="loading || !loginForm.form.valid">
+      <button type="submit" class="login-button" [disabled]="loading || loginForm.invalid">
         <span *ngIf="loading" class="spinner"></span>
         <span>{{ loading ? 'Signing in...' : 'Sign In' }}</span>
       </button>

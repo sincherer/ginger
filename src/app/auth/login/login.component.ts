@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, User } from '../auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
 import { RbacService } from '../../core/services/rbac.service';
 
 @Component({
@@ -9,40 +10,51 @@ import { RbacService } from '../../core/services/rbac.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  username : string = '';
-  password: string = '';
+  loginForm: FormGroup;
   loading = false;
   errorMsg = '';
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService, 
     private router: Router,
     private rbacService: RbacService
-  ) {}
-
-  onSubmit() {
-    this.errorMsg = '';
-    this.loading = true;
-    this.authService.login(this.username, this.password).subscribe({
-      next: (user: User) => {
-        this.loading = false;
-        
-        // Initialize RBAC service with user's role
-        // For admin users, use the admin role ID which has all permissions
-        if (user.role === 'admin') {
-          this.rbacService.initializeUserRole('admin-user', 'admin');
-        } else {
-          // For regular users, assign a more restricted role
-          this.rbacService.initializeUserRole('regular-user', 'sales');
-        }
-        
-        // Navigate to dashboard regardless of role
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.errorMsg = err.message || 'Login failed';
-      }
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+
+  onSubmit(): void {
+    if (this.loginForm.valid) {
+      this.errorMsg = '';
+      this.loading = true;
+      const { email, password } = this.loginForm.value;
+      
+      this.authService.login(email, password).subscribe({
+        next: () => {
+          const user = this.authService.getCurrentUser();
+          
+          if (user) {
+            // Initialize RBAC service with user's role
+            if (user.role === 'admin') {
+              this.rbacService.initializeUserRole('admin-user', 'admin');
+            } else {
+              this.rbacService.initializeUserRole('regular-user', user.role);
+            }
+          }
+          
+          this.loading = false;
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMsg = err.message || 'Login failed';
+        }
+      });
+    } else {
+      this.loginForm.markAllAsTouched();
+    }
   }
 }

@@ -1,0 +1,213 @@
+<div class="container mx-auto p-6">
+  <div class="mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-semibold text-slate-800">{{ isEditMode ? 'Edit User' : 'Create New User' }}</h1>
+        <p class="text-slate-600 mt-1">{{ isEditMode ? 'Update user information' : 'Add a new user to the system' }}</p>
+      </div>
+      <div>
+        <button nz-button (click)="cancel()" class="mr-2">Cancel</button>
+        <button 
+          nz-button 
+          nzType="primary" 
+          [nzLoading]="loading"
+          (click)="onSubmit()">
+          {{ isEditMode ? 'Update' : 'Create' }} User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nz-card [nzLoading]="loadingUser">
+    <form nz-form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Basic Information -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-slate-700">Basic Information</h3>
+          
+          <nz-form-item>
+            <nz-form-label nzRequired>First Name</nz-form-label>
+            <nz-form-control [nzErrorTip]="firstNameErrorTpl">
+              <input 
+                nz-input 
+                formControlName="first_name" 
+                placeholder="Enter first name" 
+              />
+              <ng-template #firstNameErrorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                  Please enter first name
+                </ng-container>
+                <ng-container *ngIf="control.hasError('minlength')">
+                  First name must be at least 2 characters
+                </ng-container>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>Last Name</nz-form-label>
+            <nz-form-control [nzErrorTip]="lastNameErrorTpl">
+              <input 
+                nz-input 
+                formControlName="last_name" 
+                placeholder="Enter last name" 
+              />
+              <ng-template #lastNameErrorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                  Please enter last name
+                </ng-container>
+                <ng-container *ngIf="control.hasError('minlength')">
+                  Last name must be at least 2 characters
+                </ng-container>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>Email</nz-form-label>
+            <nz-form-control [nzErrorTip]="emailErrorTpl">
+              <input 
+                nz-input 
+                formControlName="email" 
+                placeholder="Enter email address" 
+                [readonly]="isEditMode"
+              />
+              <ng-template #emailErrorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                  Please enter email address
+                </ng-container>
+                <ng-container *ngIf="control.hasError('email')">
+                  Please enter a valid email address
+                </ng-container>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>Company</nz-form-label>
+            <nz-form-control [nzErrorTip]="'Please select a company'">
+              <nz-select 
+                formControlName="company_id" 
+                [nzLoading]="loadingCompanies"
+                nzPlaceHolder="Select company">
+                <nz-option 
+                  *ngFor="let company of companies" 
+                  [nzValue]="company.id" 
+                  [nzLabel]="company.name">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <!-- Access and Security -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-slate-700">Access & Security</h3>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>Role</nz-form-label>
+            <nz-form-control [nzErrorTip]="'Please select a role'">
+              <nz-select 
+                formControlName="role" 
+                nzPlaceHolder="Select role">
+                <nz-option 
+                  *ngFor="let role of availableRoles" 
+                  [nzValue]="role" 
+                  [nzLabel]="role | titlecase">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-control>
+              <label nz-checkbox formControlName="is_active">
+                Active User
+              </label>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-divider></nz-divider>
+
+          <!-- Password Section - Only show in create mode or when changing password -->
+          <ng-container *ngIf="!isEditMode">
+            <nz-form-item>
+              <nz-form-label [nzRequired]="!isEditMode">Password</nz-form-label>
+              <nz-form-control [nzErrorTip]="passwordErrorTpl">
+                <input 
+                  nz-input 
+                  type="password" 
+                  formControlName="password" 
+                  placeholder="Enter password" 
+                />
+                <ng-template #passwordErrorTpl let-control>
+                  <ng-container *ngIf="control.hasError('required')">
+                    Please enter password
+                  </ng-container>
+                  <ng-container *ngIf="control.hasError('minlength')">
+                    Password must be at least 8 characters
+                  </ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label [nzRequired]="!isEditMode">Confirm Password</nz-form-label>
+              <nz-form-control [nzErrorTip]="confirmPasswordErrorTpl">
+                <input 
+                  nz-input 
+                  type="password" 
+                  formControlName="confirmPassword" 
+                  placeholder="Confirm password" 
+                />
+                <ng-template #confirmPasswordErrorTpl let-control>
+                  <ng-container *ngIf="control.hasError('required')">
+                    Please confirm your password
+                  </ng-container>
+                  <ng-container *ngIf="control.hasError('passwordMismatch')">
+                    Passwords do not match
+                  </ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Error Display -->
+      <nz-alert
+        *ngIf="error"
+        nzType="error"
+        [nzMessage]="error"
+        class="mt-4"
+        nzShowIcon>
+      </nz-alert>
+
+      <!-- Success Display -->
+      <nz-alert
+        *ngIf="success"
+        nzType="success"
+        [nzMessage]="success"
+        class="mt-4"
+        nzShowIcon>
+      </nz-alert>
+
+      <!-- Form Actions -->
+      <div class="mt-6 flex justify-end">
+        <button 
+          nz-button 
+          (click)="cancel()" 
+          class="mr-2">
+          Cancel
+        </button>
+        <button 
+          nz-button 
+          nzType="primary" 
+          [nzLoading]="loading"
+          type="submit">
+          {{ isEditMode ? 'Update' : 'Create' }} User
+        </button>
+      </div>
+    </form>
+  </nz-card>
+</div>

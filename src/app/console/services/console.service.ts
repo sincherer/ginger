@@ -3,7 +3,8 @@ import { Observable, of, throwError } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Company, CompanySettings, BillingPlan, BillingStatus } from '../models/company.model';
+import { Company } from '../../core/models/company.model';
+import { CompanySettings, BillingPlan, BillingStatus } from '../models/company.model';
 import { ConsoleUser, UserInvitation, InvitationStatus, CompanyUser, UserSession } from '../models/user.model';
 import { Feature, CompanyFeature, DEFAULT_FEATURES } from '../models/feature.model';
 import { BillingCycle, BillingPlanDetails, BillingTransaction, DEFAULT_BILLING_PLANS } from '../models/billing.model';
@@ -29,15 +30,21 @@ export class ConsoleService {
       id: 'console-admin-1',
       username: 'console_admin',
       email: 'admin@gingererp.com',
-      firstName: 'System',
-      lastName: 'Administrator',
+      first_name: 'System',
+      last_name: 'Administrator',
       role: 'console_admin',
-      companyId: 'system',
-      active: true,
-      lastLogin: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date()
+      company_id: 'system',
+      is_active: true,
+      last_login: new Date(),
+      created_at: new Date(),
+      updated_at: new Date()
     });
+  }
+
+  getCurrentUserId(): string | null {
+    // Get the current user's ID from the authentication state
+    const currentUser = this.users.find(u => u.is_active);
+    return currentUser?.id || null;
   }
 
   // Company Management
@@ -50,9 +57,10 @@ export class ConsoleService {
       email: company.email || '',
       taxId: company.taxId || '',
       website: company.website || '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      active: true,
+      registration_number: company.registration_number || '',
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       logo: company.logo
     };
 
@@ -92,13 +100,13 @@ export class ConsoleService {
       id: uuidv4(),
       username: user.username || '',
       email: user.email || '',
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
       role: user.role || 'user',
-      companyId: user.companyId || '',
-      active: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      company_id: user.company_id || '',
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date()
     };
 
     this.users.push(newUser);
@@ -110,7 +118,7 @@ export class ConsoleService {
   }
 
   getUsersByCompany(companyId: string): Observable<ConsoleUser[]> {
-    const companyUsers = this.users.filter(u => u.companyId === companyId);
+    const companyUsers = this.users.filter(u => u.company_id === companyId);
     return of(companyUsers).pipe(delay(500));
   }
 
@@ -141,12 +149,12 @@ export class ConsoleService {
     const newInvitation: UserInvitation = {
       id: uuidv4(),
       email: invitation.email || '',
-      companyId: invitation.companyId || '',
-      roleId: invitation.roleId || '',
-      invitedBy: invitation.invitedBy || '',
+      company_id: invitation.company_id || '',
+      role_id: invitation.role_id || '',
+      invited_by: invitation.invited_by || '',
       status: InvitationStatus.PENDING,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-      createdAt: new Date(),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      created_at: new Date(),
       token: uuidv4()
     };
 
@@ -155,7 +163,7 @@ export class ConsoleService {
   }
 
   getInvitationsByCompany(companyId: string): Observable<UserInvitation[]> {
-    const invitations = this.invitations.filter(i => i.companyId === companyId);
+    const invitations = this.invitations.filter(i => i.company_id === companyId);
     return of(invitations).pipe(delay(500));
   }
 
@@ -206,12 +214,12 @@ export class ConsoleService {
   }
 
   getCompanyFeatures(companyId: string): Observable<CompanyFeature[]> {
-    const features = this.companyFeatures.filter(cf => cf.companyId === companyId);
+    const features = this.companyFeatures.filter(cf => cf.company_id === companyId);
     return of(features).pipe(delay(500));
   }
 
   toggleFeature(companyId: string, featureId: string, enabled: boolean): Observable<CompanyFeature> {
-    const index = this.companyFeatures.findIndex(cf => cf.companyId === companyId && cf.featureId === featureId);
+    const index = this.companyFeatures.findIndex(cf => cf.company_id === companyId && cf.feature_id === featureId);
     
     if (index !== -1) {
       // Update existing feature
@@ -224,8 +232,8 @@ export class ConsoleService {
     } else {
       // Create new feature entry
       const newFeature: CompanyFeature = {
-        companyId,
-        featureId,
+        company_id: companyId,
+        feature_id: featureId,
         enabled
       };
       this.companyFeatures.push(newFeature);
@@ -239,25 +247,25 @@ export class ConsoleService {
   }
 
   getCompanyBillingCycle(companyId: string): Observable<BillingCycle | null> {
-    const billingCycle = this.billingCycles.find(bc => bc.companyId === companyId);
+    const billingCycle = this.billingCycles.find(bc => bc.company_id === companyId);
     return of(billingCycle || null).pipe(delay(500));
   }
 
   createBillingCycle(billingCycle: Partial<BillingCycle>): Observable<BillingCycle> {
     const newBillingCycle: BillingCycle = {
       id: uuidv4(),
-      companyId: billingCycle.companyId || '',
+      company_id: billingCycle.company_id || '',
       plan: billingCycle.plan || BillingPlan.FREE,
       status: billingCycle.status || BillingStatus.ACTIVE,
-      startDate: billingCycle.startDate || new Date(),
-      endDate: billingCycle.endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      renewalDate: billingCycle.renewalDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      start_date: billingCycle.start_date || new Date(),
+      end_date: billingCycle.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      renewal_date: billingCycle.renewal_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       price: billingCycle.price || 0,
       currency: billingCycle.currency || 'USD',
       interval: billingCycle.interval || 'monthly',
-      autoRenew: billingCycle.autoRenew || true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      auto_renew: billingCycle.auto_renew || true,
+      created_at: new Date(),
+      updated_at: new Date()
     };
 
     this.billingCycles.push(newBillingCycle);
@@ -270,7 +278,7 @@ export class ConsoleService {
       const updatedBillingCycle = {
         ...this.billingCycles[index],
         ...updates,
-        updatedAt: new Date()
+        updated_at: new Date()
       };
       this.billingCycles[index] = updatedBillingCycle;
       return of(updatedBillingCycle).pipe(delay(500));
@@ -287,7 +295,7 @@ export class ConsoleService {
     }
 
     // Verify target user exists and belongs to the specified company
-    const targetUser = this.users.find(u => u.id === targetUserId && u.companyId === companyId);
+    const targetUser = this.users.find(u => u.id === targetUserId && u.company_id === companyId);
     if (!targetUser) {
       return throwError(() => new Error('Target user not found or does not belong to the specified company'));
     }
