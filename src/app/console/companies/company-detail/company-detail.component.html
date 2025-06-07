@@ -164,13 +164,13 @@
             <h3>Subscription</h3>
             <div class="subscription-info" *ngIf="billingCycle">
               <div class="plan-badge" [ngClass]="getPlanClass()">
-                {{ billingCycle?.plan }}
+                {{ billingCycle.plan }}
               </div>
               <div class="subscription-details">
                 <div class="detail-item">
                   <span class="detail-label">Status:</span>
                   <span class="detail-value status" [ngClass]="getStatusClass()">
-                    {{ billingCycle?.status }}
+                    {{ billingCycle.status }}
                   </span>
                 </div>
                 <div class="detail-item">
