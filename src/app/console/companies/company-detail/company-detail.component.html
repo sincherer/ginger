@@ -359,7 +359,7 @@
           <div class="subscription-details-full">
             <div class="plan-info">
               <div class="plan-badge large" [ngClass]="getPlanClass()">
-                {{ billingCycle?.plan }}
+                {{ billingCycle.plan }}
               </div>
               <div class="plan-price">
                 <span class="price">{{ billingCycle.price | currency }}</span>
@@ -372,7 +372,7 @@
                 <div class="item-label">Status</div>
                 <div class="item-value">
                   <span class="status" [ngClass]="getStatusClass()">
-                    {{ billingCycle?.status }}
+                    {{ billingCycle.status }}
                   </span>
                 </div>
               </div>
