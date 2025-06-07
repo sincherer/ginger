@@ -1,0 +1,98 @@
+<div class="signup-page">
+    <div class="signup-container">
+      <div class="logo-container">
+        <h1 class="app-name">Ginger ERP</h1>
+      </div>
+      
+      <h2 class="signup-title">Create Account</h2>
+      
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form" novalidate>
+        <!-- Username Input -->
+        <div class="form-group">
+          <div class="input-icon-wrapper">
+            <i class="input-icon username-icon"></i> <!-- You'll need a CSS class for this icon -->
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Username"
+              autocomplete="username"
+            />
+            <div class="error-message" *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.errors">
+              <span *ngIf="signupForm.get('username')?.errors?.['required']">Username is required</span>
+              <span *ngIf="signupForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Email Input -->
+        <div class="form-group">
+          <div class="input-icon-wrapper">
+            <i class="input-icon user-icon"></i>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="Email"
+              autocomplete="email"
+            />
+            <div class="error-message" *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors">
+              <span *ngIf="signupForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="signupForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Password Input -->
+        <div class="form-group">
+          <div class="input-icon-wrapper">
+            <i class="input-icon password-icon"></i>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="Password"
+              autocomplete="new-password"
+            />
+            <div class="error-message" *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.errors">
+              <span *ngIf="signupForm.get('password')?.errors?.['required']">Password is required</span>
+              <span *ngIf="signupForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Confirm Password Input -->
+        <div class="form-group">
+          <div class="input-icon-wrapper">
+            <i class="input-icon password-icon"></i>
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              placeholder="Confirm Password"
+              autocomplete="new-password"
+            />
+            <div class="error-message" *ngIf="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.errors">
+              <span *ngIf="signupForm.get('confirmPassword')?.errors?.['required']">Password confirmation is required</span>
+            </div>
+            <div class="error-message" *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched">
+              <span>Passwords do not match</span>
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="signup-button" [disabled]="loading || signupForm.invalid && signupForm.touched">
+          <span *ngIf="loading" class="spinner"></span>
+          <span>{{ loading ? 'Creating Account...' : 'Sign Up' }}</span>
+        </button>
+        
+        <div class="success-message" *ngIf="successMsg">{{ successMsg }}</div>
+        <div class="error-message" *ngIf="errorMsg">{{ errorMsg }}</div>
+      </form>
+      
+      <div class="login-link">
+        <span>Already have an account? </span>
+        <a routerLink="/auth/login">Sign In</a>
+      </div>
+    </div>
+  </div>
