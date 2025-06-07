@@ -1,0 +1,224 @@
+<div class="console-dashboard">
+  <header class="dashboard-header">
+    <h1>Console Dashboard</h1>
+    <div class="actions">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="loading">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="!loading && !error" class="dashboard-content">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="card" (click)="navigateTo('/console/companies')">
+        <div class="card-icon">
+          <i class="fas fa-building"></i>
+        </div>
+        <div class="card-content">
+          <h3>Companies</h3>
+          <div class="card-value">{{ activeCompanies }}</div>
+          <div class="card-subtitle">Active Companies</div>
+        </div>
+      </div>
+
+      <div class="card" (click)="navigateTo('/console/users')">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="card-content">
+          <h3>Users</h3>
+          <div class="card-value">{{ totalUsers }}</div>
+          <div class="card-subtitle">Total Users</div>
+        </div>
+      </div>
+
+      <div class="card" (click)="navigateTo('/console/users/invitations')">
+        <div class="card-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="card-content">
+          <h3>Invitations</h3>
+          <div class="card-value">{{ pendingInvitations }}</div>
+          <div class="card-subtitle">Pending Invitations</div>
+        </div>
+      </div>
+
+      <div class="card" (click)="navigateTo('/console/billing')">
+        <div class="card-icon">
+          <i class="fas fa-credit-card"></i>
+        </div>
+        <div class="card-content">
+          <h3>Billing</h3>
+          <div class="card-value">{{ upcomingRenewals.length }}</div>
+          <div class="card-subtitle">Active Subscriptions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2>Recent Companies</h2>
+        <a routerLink="/console/companies" class="view-all">View All</a>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Company Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let company of companies.slice(0, 5)">
+              <td>{{ company.name }}</td>
+              <td>{{ company.email }}</td>
+              <td>
+                <span class="status" [ngClass]="company.active ? 'active' : 'inactive'">
+                  {{ company.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>{{ company.createdAt | date:'medium' }}</td>
+              <td>
+                <button class="action-btn" [routerLink]="['/console/companies', company.id]">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" [routerLink]="['/console/companies', company.id, 'edit']">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="companies.length === 0">
+              <td colspan="5" class="empty-state">No companies found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2>Recent Users</h2>
+        <a routerLink="/console/users" class="view-all">View All</a>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of recentUsers">
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                {{ (companies | find: user.companyId: 'id')?.name || 'N/A' }}
+              </td>
+              <td>{{ user.role }}</td>
+              <td>
+                <button class="action-btn" [routerLink]="['/console/users', user.id]">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" [routerLink]="['/console/users', user.id, 'edit']">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="recentUsers.length === 0">
+              <td colspan="5" class="empty-state">No users found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Upcoming Renewals -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2>Upcoming Renewals</h2>
+        <a routerLink="/console/billing" class="view-all">View All</a>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Renewal Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let billing of upcomingRenewals.slice(0, 5)">
+              <td>{{ (companies | find: billing.companyId: 'id')?.name || 'N/A' }}</td>
+              <td>{{ billing.plan }}</td>
+              <td>
+                <span class="status" [ngClass]="billing.status.toLowerCase()">
+                  {{ billing.status }}
+                </span>
+              </td>
+              <td>{{ billing.renewalDate | date:'mediumDate' }}</td>
+              <td>
+                <button class="action-btn" [routerLink]="['/console/billing', billing.id]">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" [routerLink]="['/console/billing', billing.id, 'edit']">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="upcomingRenewals.length === 0">
+              <td colspan="5" class="empty-state">No upcoming renewals</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+      </div>
+      <div class="quick-actions">
+        <button class="action-card" [routerLink]="['/console/companies/new']">
+          <i class="fas fa-plus-circle"></i>
+          <span>Add Company</span>
+        </button>
+        <button class="action-card" [routerLink]="['/console/users/invite']">
+          <i class="fas fa-user-plus"></i>
+          <span>Invite User</span>
+        </button>
+        <button class="action-card" [routerLink]="['/console/features']">
+          <i class="fas fa-toggle-on"></i>
+          <span>Manage Features</span>
+        </button>
+        <button class="action-card" [routerLink]="['/console/billing/plans']">
+          <i class="fas fa-tags"></i>
+          <span>Billing Plans</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

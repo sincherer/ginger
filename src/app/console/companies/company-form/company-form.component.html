@@ -1,0 +1,215 @@
+<div class="company-form-container">
+  <header class="page-header">
+    <div class="header-content">
+      <h1>{{ isEditMode ? 'Edit Company' : 'Create New Company' }}</h1>
+      <p>{{ isEditMode ? 'Update company information' : 'Add a new company to the system' }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="secondary-btn" (click)="cancel()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+      <button 
+        class="primary-btn" 
+        [disabled]="submitting || companyForm.invalid" 
+        (click)="onSubmit()"
+      >
+        <i class="fas" [ngClass]="isEditMode ? 'fa-save' : 'fa-plus'"></i>
+        {{ isEditMode ? 'Update Company' : 'Create Company' }}
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading company data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    <i class="fas fa-check-circle"></i>
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <div *ngIf="!loading" class="form-content">
+    <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+      <div class="form-layout">
+        <div class="form-main">
+          <div class="form-section">
+            <h2>Company Information</h2>
+            
+            <div class="form-group">
+              <label for="name">Company Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="name" 
+                formControlName="name" 
+                placeholder="Enter company name"
+              >
+              <div *ngIf="companyForm.get('name')?.invalid && companyForm.get('name')?.touched" class="error-text">
+                <span *ngIf="companyForm.get('name')?.errors?.['required']">Company name is required</span>
+                <span *ngIf="companyForm.get('name')?.errors?.['maxlength']">Company name cannot exceed 100 characters</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  formControlName="email" 
+                  placeholder="Enter email address"
+                >
+                <div *ngIf="companyForm.get('email')?.invalid && companyForm.get('email')?.touched" class="error-text">
+                  <span *ngIf="companyForm.get('email')?.errors?.['required']">Email is required</span>
+                  <span *ngIf="companyForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input 
+                  type="tel" 
+                  id="phone" 
+                  formControlName="phone" 
+                  placeholder="Enter phone number"
+                >
+                <div *ngIf="companyForm.get('phone')?.invalid && companyForm.get('phone')?.touched" class="error-text">
+                  <span *ngIf="companyForm.get('phone')?.errors?.['maxlength']">Phone number cannot exceed 20 characters</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="address">Address</label>
+              <textarea 
+                id="address" 
+                formControlName="address" 
+                placeholder="Enter company address"
+                rows="3"
+              ></textarea>
+              <div *ngIf="companyForm.get('address')?.invalid && companyForm.get('address')?.touched" class="error-text">
+                <span *ngIf="companyForm.get('address')?.errors?.['maxlength']">Address cannot exceed 200 characters</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="taxId">Tax ID / VAT Number</label>
+                <input 
+                  type="text" 
+                  id="taxId" 
+                  formControlName="taxId" 
+                  placeholder="Enter tax ID or VAT number"
+                >
+                <div *ngIf="companyForm.get('taxId')?.invalid && companyForm.get('taxId')?.touched" class="error-text">
+                  <span *ngIf="companyForm.get('taxId')?.errors?.['maxlength']">Tax ID cannot exceed 50 characters</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="website">Website</label>
+                <input 
+                  type="url" 
+                  id="website" 
+                  formControlName="website" 
+                  placeholder="Enter website URL"
+                >
+                <div *ngIf="companyForm.get('website')?.invalid && companyForm.get('website')?.touched" class="error-text">
+                  <span *ngIf="companyForm.get('website')?.errors?.['maxlength']">Website URL cannot exceed 100 characters</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Company Status</h2>
+            
+            <div class="form-group toggle-group">
+              <label for="active">Active Status</label>
+              <div class="toggle-switch">
+                <input 
+                  type="checkbox" 
+                  id="active" 
+                  formControlName="active"
+                >
+                <label for="active" class="toggle-label">
+                  <span class="toggle-inner"></span>
+                  <span class="toggle-switch"></span>
+                </label>
+                <span class="toggle-text">{{ companyForm.get('active')?.value ? 'Active' : 'Inactive' }}</span>
+              </div>
+              <div class="help-text">
+                <i class="fas fa-info-circle"></i>
+                <span>Inactive companies will not be able to access the system</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-sidebar">
+          <div class="form-section">
+            <h2>Company Logo</h2>
+            
+            <div class="logo-upload">
+              <div class="logo-preview" [ngClass]="{'has-logo': logoPreview}">
+                <img *ngIf="logoPreview" [src]="logoPreview" alt="Company logo preview">
+                <div *ngIf="!logoPreview" class="upload-placeholder">
+                  <i class="fas fa-building"></i>
+                  <span>No logo uploaded</span>
+                </div>
+              </div>
+
+              <div class="logo-actions">
+                <label class="upload-btn">
+                  <i class="fas fa-upload"></i>
+                  <span>{{ logoPreview ? 'Change Logo' : 'Upload Logo' }}</span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    (change)="onLogoChange($event)"
+                    hidden
+                  >
+                </label>
+
+                <button 
+                  *ngIf="logoPreview" 
+                  type="button" 
+                  class="remove-btn" 
+                  (click)="removeLogo()"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                  <span>Remove</span>
+                </button>
+              </div>
+
+              <div class="help-text">
+                <i class="fas fa-info-circle"></i>
+                <span>Recommended size: 200x200 pixels. Max file size: 2MB.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-btn" (click)="cancel()">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="primary-btn" 
+          [disabled]="submitting || companyForm.invalid"
+        >
+          <i *ngIf="submitting" class="fas fa-spinner fa-spin"></i>
+          <span *ngIf="!submitting">{{ isEditMode ? 'Update Company' : 'Create Company' }}</span>
+          <span *ngIf="submitting">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
