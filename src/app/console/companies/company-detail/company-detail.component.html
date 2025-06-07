@@ -6,10 +6,10 @@
           <img [src]="company.logo" alt="{{ company.name }} logo">
         </div>
         <div class="company-logo-placeholder" *ngIf="!company.logo">
-          {{ company?.name?.charAt(0) }}
+          {{ company.name.charAt(0) }}
         </div>
         <div class="plan-badge large" [ngClass]="billingCycle?.plan?.toLowerCase()">
-          {{ billingCycle?.plan }}
+          {{ billingCycle.plan }}
         </div>
         <div class="company-info">
           <h1>{{ company.name }}</h1>
@@ -153,7 +153,7 @@
                 <div class="stat-label">Pending Invitations</div>
               </div>
               <div class="stat-item">
-                <div class="stat-value">{{ features.filter(f => f.enabled).length }}</div>
+                <div class="stat-value">{{ features?.filter(f => f.enabled).length || 0 }}</div>
                 <div class="stat-label">Active Features</div>
               </div>
             </div>
@@ -163,7 +163,7 @@
             <h3>Subscription</h3>
             <div class="subscription-info" *ngIf="billingCycle">
               <div class="plan-badge" [ngClass]="billingCycle.plan.toLowerCase()">
-                {{ billingCycle.plan }}
+                {{ billingCycle?.plan }}
               </div>
               <div class="subscription-details">
                 <div class="detail-item">
