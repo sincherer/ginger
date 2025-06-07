@@ -140,9 +140,19 @@ export class UserListComponent implements OnInit {
     this.applyFilters();
   }
 
-  onSort(field: keyof UserListItem | 'display_name'): void {
-    const header = this.tableHeaders.find(h => h.field === field);
-    const sortKey = header?.sortKey || field as keyof UserListItem;
+  onSort(field: keyof UserListItem | 'display_name' | 'name' | 'company'): void {
+    let sortKey: keyof UserListItem;
+    
+    // Map UI fields to actual data fields
+    if (field === 'name') {
+      sortKey = 'first_name';
+    } else if (field === 'company') {
+      sortKey = 'company_id';
+    } else if (field === 'display_name') {
+      sortKey = 'first_name';
+    } else {
+      sortKey = field as keyof UserListItem;
+    }
     
     if (this.sortField === sortKey) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -154,8 +164,19 @@ export class UserListComponent implements OnInit {
     this.applyFilters();
   }
 
-  getSortIcon(field: keyof UserListItem): string {
-    if (field !== this.sortField) {
+  getSortIcon(field: keyof UserListItem | 'name' | 'company'): string {
+    let sortKey: keyof UserListItem;
+    
+    // Map UI fields to actual data fields
+    if (field === 'name') {
+      sortKey = 'first_name';
+    } else if (field === 'company') {
+      sortKey = 'company_id';
+    } else {
+      sortKey = field;
+    }
+    
+    if (sortKey !== this.sortField) {
       return 'unfold_more';
     }
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';

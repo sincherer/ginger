@@ -132,7 +132,7 @@
               <td>{{ user.first_name }} {{ user.last_name }}</td>
               <td>{{ user.email }}</td>
               <td>
-                {{ (companies | find: user.companyid: 'id')?.name || 'N/A' }}
+                {{ (companies | find: user.company_id: 'id')?.name || 'N/A' }}
               </td>
               <td>{{ user.role }}</td>
               <td>
@@ -171,7 +171,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let billing of upcomingRenewals.slice(0, 5)">
-              <td>{{ (companies | find: billing.companyId: 'id')?.name || 'N/A' }}</td>
+              <td>{{ (companies | find: billing.company_id: 'id')?.name || 'N/A' }}</td>
               <td>{{ billing.plan }}</td>
               <td>
                 <span class="status" [ngClass]="billing.status.toLowerCase()">

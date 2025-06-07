@@ -199,12 +199,12 @@ export class UserDetailComponent implements OnInit {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   }
 
-  formatDate(date: string | null): string {
+  formatDate(date: string | Date | null | undefined): string {
     if (!date) return 'N/A';
     return new Date(date).toLocaleString();
   }
 
-  formatDateShort(date: string | null): string {
+  formatDateShort(date: string | Date | null | undefined): string {
     if (!date) return 'N/A';
     return new Date(date).toLocaleDateString();
   }

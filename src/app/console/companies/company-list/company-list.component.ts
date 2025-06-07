@@ -126,11 +126,21 @@ export class CompanyListComponent implements OnInit {
     this.router.navigate(['/console/companies', companyId, 'edit']);
   }
 
+  viewUserWithStopPropagation(companyId: string, event: Event): void {
+    event.stopPropagation();
+    this.navigateToDetail(companyId);
+  }
+
   createNewCompany(): void {
     this.router.navigate(['/console/companies/new']);
   }
 
   refreshData(): void {
     this.loadCompanies();
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.onSearch();
   }
 }

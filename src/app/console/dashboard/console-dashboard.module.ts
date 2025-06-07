@@ -10,11 +10,12 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    ConsoleDashboardComponent
+    // ConsoleDashboardComponent is standalone, so it should not be declared here
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ConsoleDashboardComponent // Import the standalone component instead
   ]
 })
 export class ConsoleDashboardModule { }

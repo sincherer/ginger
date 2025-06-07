@@ -8,8 +8,8 @@
         <div class="company-logo-placeholder" *ngIf="!company.logo">
           {{ company.name.charAt(0) }}
         </div>
-        <div class="plan-badge large" [ngClass]="billingCycle?.plan?.toLowerCase()">
-          {{ billingCycle.plan }}
+        <div class="plan-badge large" [ngClass]="getPlanClass()">
+          {{ billingCycle?.plan }}
         </div>
         <div class="company-info">
           <h1>{{ company.name }}</h1>
@@ -153,7 +153,8 @@
                 <div class="stat-label">Pending Invitations</div>
               </div>
               <div class="stat-item">
-                <div class="stat-value">{{ features?.filter(f => f.enabled).length || 0 }}</div>
+                <!-- FIX: ERROR - Called the getter without parentheses () -->
+                <div class="stat-value">{{ getActiveFeaturesCount }}</div>
                 <div class="stat-label">Active Features</div>
               </div>
             </div>
@@ -162,14 +163,14 @@
           <div class="info-card">
             <h3>Subscription</h3>
             <div class="subscription-info" *ngIf="billingCycle">
-              <div class="plan-badge" [ngClass]="billingCycle.plan.toLowerCase()">
+              <div class="plan-badge" [ngClass]="getPlanClass()">
                 {{ billingCycle?.plan }}
               </div>
               <div class="subscription-details">
                 <div class="detail-item">
                   <span class="detail-label">Status:</span>
-                  <span class="detail-value status" [ngClass]="billingCycle.status.toLowerCase()">
-                    {{ billingCycle.status }}
+                  <span class="detail-value status" [ngClass]="getStatusClass()">
+                    {{ billingCycle?.status }}
                   </span>
                 </div>
                 <div class="detail-item">
@@ -320,7 +321,7 @@
                     <input 
                       type="checkbox" 
                       [checked]="feature.enabled"
-                      (change)="onFeatureToggle(feature.feature_id, $event)"
+                      (change)="toggleFeature(feature.feature_id, $event)"
                     >
                     <span class="toggle-slider"></span>
                   </label>
@@ -352,12 +353,13 @@
       </div>
 
       <div class="billing-container">
+        <!-- FIX: All `?.` operators removed from children because *ngIf guarantees billingCycle is not null -->
         <div class="info-card" *ngIf="billingCycle">
           <h3>Current Subscription</h3>
           <div class="subscription-details-full">
             <div class="plan-info">
-              <div class="plan-badge large" [ngClass]="billingCycle?.plan?.toLowerCase()">
-                {{ billingCycle.plan }}
+              <div class="plan-badge large" [ngClass]="getPlanClass()">
+                {{ billingCycle?.plan }}
               </div>
               <div class="plan-price">
                 <span class="price">{{ billingCycle.price | currency }}</span>
@@ -369,8 +371,8 @@
               <div class="subscription-item">
                 <div class="item-label">Status</div>
                 <div class="item-value">
-                  <span class="status" [ngClass]="billingCycle.status.toLowerCase()">
-                    {{ billingCycle.status }}
+                  <span class="status" [ngClass]="getStatusClass()">
+                    {{ billingCycle?.status }}
                   </span>
                 </div>
               </div>
